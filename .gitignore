@@ -1,0 +1,12 @@
+# 本地配置（可含密钥，勿提交）
+config.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 运行痕迹
+*.log
+.kimi-workspace/
+history/

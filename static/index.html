@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>财税备考工作台</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">财</span>
+    <div>
+      <h1>财税备考工作台</h1>
+      <p class="sub">pass-all-exams 技能 · Kimi 驱动 · 本机运行</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="status" id="statusBar">加载中…</div>
+    <span class="anki-dot off" id="ankiDot" title="Anki 状态">Anki</span>
+    <div class="view-ctrl">
+      <button id="fontMinus" title="缩小字体">A−</button>
+      <button id="fontPlus" title="放大字体">A＋</button>
+      <button id="themeToggle" title="切换日/夜间模式">🌙</button>
+    </div>
+    <button id="btnQuit" class="quit" title="退出并关闭本地服务">退出</button>
+  </div>
+</header>
+
+<nav>
+  <button class="tab active" data-tab="overview">总览</button>
+  <button class="tab" data-tab="plan">备考计划</button>
+  <button class="tab" data-tab="calendar">日历</button>
+  <button class="tab" data-tab="chat">对话</button>
+  <button class="tab" data-tab="quiz">刷题</button>
+</nav>
+
+<main>
+  <!-- 总览 -->
+  <section id="tab-overview" class="panel active">
+    <div class="panel-head">
+      <h2>课程状态</h2>
+      <button id="btnRefresh" class="ghost">刷新</button>
+    </div>
+    <div id="courseGrid" class="grid"><p class="hint">加载中…</p></div>
+  </section>
+
+  <!-- 备考计划 -->
+  <section id="tab-plan" class="panel">
+    <div class="panel-head">
+      <h2>技能动作</h2>
+    </div>
+    <div class="form-row">
+      <label>课程</label>
+      <select id="planCourse"></select>
+    </div>
+    <div class="btn-group">
+      <button data-act="status" class="ghost">状态 status</button>
+      <button data-act="summary" class="ghost">考前清单 summary</button>
+      <button data-act="resume" class="primary">继续学习 resume（教练）</button>
+      <button data-act="drill" class="primary">薄弱点 drill（教练）</button>
+    </div>
+    <p class="hint">status / summary 直接调用 examctl（只读）；resume / drill 跳转对话页，由教练基于实时状态推进。</p>
+    <pre id="examOut" class="output" hidden></pre>
+  </section>
+
+  <!-- 刷题（Anki） -->
+  <section id="tab-quiz" class="panel">
+    <div class="panel-head">
+      <h2>Anki 刷题</h2>
+      <span id="ankiStatus" class="hint">检测中…</span>
+      <button id="ankiRefresh" class="ghost small">刷新牌组</button>
+    </div>
+    <div class="form-row" id="quizSetup">
+      <select id="quizDeck"></select>
+      <div class="seg">
+        <button class="seg-btn active" data-mode="due"><span>到期</span><span class="l2">复习</span></button>
+        <button class="seg-btn" data-mode="new"><span>新卡</span><span class="l2">覆盖</span></button>
+      </div>
+      <select id="quizLimit">
+        <option value="10">10 张</option>
+        <option value="20" selected>20 张</option>
+        <option value="50">50 张</option>
+      </select>
+      <button id="quizStart" class="primary">抽题</button>
+    </div>
+    <div id="quizArea" class="quiz-area" hidden>
+      <div class="quiz-meta">
+        <span id="quizProgress"></span>
+        <span id="quizCount"></span>
+      </div>
+      <div id="quizCard" class="quiz-card">
+        <div class="quiz-deck" id="quizDeckName"></div>
+        <div class="quiz-q" id="quizQ"></div>
+        <ul class="quiz-opts" id="quizOpts"></ul>
+        <div id="quizReveal" class="quiz-reveal" hidden>
+          <div class="quiz-a" id="quizA"></div>
+          <div class="quiz-notes" id="quizNotes"></div>
+        </div>
+      </div>
+      <div class="quiz-actions">
+        <button id="quizShow" class="primary">显示答案</button>
+        <div id="quizGrades" class="grade-row" hidden>
+          <button class="grade g1" data-ease="1">错</button>
+          <button class="grade g2" data-ease="2">含糊</button>
+          <button class="grade g3" data-ease="3">对</button>
+          <button class="grade g4" data-ease="4">秒杀</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 日历 -->
+  <section id="tab-calendar" class="panel">
+    <div class="cal-head">
+      <button id="calPrev" class="ghost">‹</button>
+      <h2 id="calTitle">—</h2>
+      <button id="calToday" class="ghost">今天</button>
+      <button id="calNext" class="ghost">›</button>
+      <span class="cal-legend">
+        <i class="dot exam"></i>考试日
+        <i class="dot due"></i>复习到期
+        <i class="dot study"></i>学习痕迹
+      </span>
+    </div>
+    <div class="cal-week-row">
+      <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span class="wk">六</span><span class="wk">日</span>
+    </div>
+    <div id="calGrid" class="cal-grid"></div>
+    <div id="calDetail" class="cal-detail"></div>
+  </section>
+
+  <!-- 对话 -->
+  <section id="tab-chat" class="panel">
+    <div class="chat-layout">
+      <aside class="history-panel">
+        <div class="panel-head">
+          <h2>历史会话</h2>
+          <button id="btnNewChat" class="ghost small">新会话</button>
+        </div>
+        <input id="historySearch" class="history-search" placeholder="搜索历史会话…">
+        <div id="historyList" class="history-list"><p class="hint">暂无历史会话</p></div>
+      </aside>
+      <div class="chat-main">
+        <div class="panel-head">
+          <h2>备考教练</h2>
+          <div class="form-inline">
+            <label class="chk"><input type="checkbox" id="ctxEnabled" checked> 携带备考上下文</label>
+            <select id="ctxCourse"></select>
+            <button id="btnClear" class="ghost" title="开启新会话（当前会话已自动保存）">新会话</button>
+          </div>
+        </div>
+        <div id="chatLog" class="chat-log"></div>
+        <div class="chat-input">
+          <textarea id="chatText" rows="3" placeholder="Enter 发送 · Shift+Enter 换行&#10;示例：继续今天的薄弱点复习 / 出 3 道经济法选择题"></textarea>
+          <button id="btnSend" class="primary">发送</button>
+        </div>
+      </div>
+      <aside class="scratch">
+        <div class="panel-head">
+          <h2>草稿纸 <span class="hint" id="scratchMeta">0 字</span></h2>
+          <div class="form-inline">
+            <button id="btnScratchToInput" class="ghost small">誊到输入框 ↓</button>
+            <button id="btnScratchClear" class="ghost small">清空</button>
+          </div>
+        </div>
+        <textarea id="scratchPad" placeholder="刷题先在这里打草稿：演算、列分录、组织答案……&#10;写好点「誊到输入框」再发送&#10;（自动保存在本浏览器，刷新不丢）"></textarea>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer>本地单用户服务 · 状态回写经确认卡片执行（白名单五命令） · v0.3</footer>
+<div id="byeOverlay">
+  <div class="big">👋</div>
+  <h2>服务已关闭</h2>
+  <p>本地端口已释放，现在可以关闭这个浏览器标签页。</p>
+  <p>下次使用：运行 caishui-agents 目录下的 start.ps1</p>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>

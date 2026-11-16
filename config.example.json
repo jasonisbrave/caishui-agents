@@ -1,0 +1,21 @@
+{
+  "host": "127.0.0.1",
+  "port": 8642,
+  "pass_all_exams_home": "D:/Code/Learning/Learning/.pass-all-exams",
+  "skill_dir": "D:/Code/Learning/Learning/.opencode/skill/pass-all-exams",
+  "learning_agents_md": "D:/Code/Learning/Learning/AGENTS.md",
+  "llm": {
+    "provider": "auto",
+    "model": "kimi-latest",
+    "kimi_base_url": "https://api.kimi.com/coding/v1",
+    "kimi_api_key": "",
+    "kimi_api_key_env": "KIMI_API_KEY",
+    "kimi_cli_bin": "kimi",
+    "request_timeout_seconds": 300
+  },
+  "anki": {
+    "enabled": true,
+    "url": "http://127.0.0.1:8765",
+    "timeout_seconds": 6
+  }
+}
