@@ -1,9 +1,9 @@
 {
   "host": "127.0.0.1",
   "port": 8642,
-  "pass_all_exams_home": "D:/Code/Learning/Learning/.pass-all-exams",
-  "skill_dir": "D:/Code/Learning/Learning/.opencode/skill/pass-all-exams",
-  "learning_agents_md": "D:/Code/Learning/Learning/AGENTS.md",
+  "pass_all_exams_home": "~/.pass-all-exams",
+  "skill_dir": "~/.opencode/skill/pass-all-exams",
+  "learning_agents_md": "",
   "llm": {
     "provider": "auto",
     "model": "kimi-latest",

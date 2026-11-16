@@ -13,9 +13,9 @@ CONFIG_PATH = BASE_DIR / "config.json"
 DEFAULTS: dict = {
     "host": "127.0.0.1",
     "port": 8642,
-    "pass_all_exams_home": "D:/Code/Learning/Learning/.pass-all-exams",
-    "skill_dir": "D:/Code/Learning/Learning/.opencode/skill/pass-all-exams",
-    "learning_agents_md": "D:/Code/Learning/Learning/AGENTS.md",
+    "pass_all_exams_home": "~/.pass-all-exams",
+    "skill_dir": "~/.opencode/skill/pass-all-exams",
+    "learning_agents_md": "",
     "llm": {
         "provider": "auto",            # auto | moonshot | kimi_cli | none
         "model": "kimi-latest",
@@ -51,6 +51,9 @@ def load_config() -> dict:
             cfg = _deep_merge(cfg, user_cfg)
         except (json.JSONDecodeError, OSError) as exc:
             raise SystemExit(f"config.json 解析失败：{exc}")
+    for key in ("pass_all_exams_home", "skill_dir", "learning_agents_md"):
+        # 支持 ~ 相对用户目录的跨机器写法（Windows/macOS/Linux 通用）
+        cfg[key] = str(Path(cfg[key]).expanduser()) if cfg[key] else ""
     return cfg
 
 
@@ -96,5 +99,5 @@ def public_config(cfg: dict) -> dict:
         "home_exists": home.exists(),
         "skill_dir_exists": skill.exists(),
         "examctl_exists": (skill / "scripts" / "examctl.py").exists(),
-        "agents_md_exists": agents_md.exists(),
+        "agents_md_exists": bool(cfg["learning_agents_md"]) and agents_md.exists(),
     }

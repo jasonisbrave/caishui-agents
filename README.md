@@ -2,7 +2,7 @@
 
 日常财税备考（CPA / 中级 / 税务师）专用的本地网页工作台：**不打开 OpenCode / Kimi Code**，让它们回归开发与日常工作。浏览器访问本机端口即可完成备考计划与对话学习。
 
-- 技能：复用 Learning 仓库的 [pass-all-exams](../Learning 仓库在 D:/Code/Learning) 技能（`examctl.py` + `SKILL.md`）。
+- 技能：复用 [pass-all-exams](https://github.com/jasonisbrave/pass_all_exams) 技能（`examctl.py` + `SKILL.md`），路径在 `config.json` 指向（支持 `~` 写法，自动展开）。
 - 模型：偏好 Kimi。两种接入方式，自动选择：
   1. **Kimi API**（推荐，流式）：`sk-kimi-` 前缀密钥走 `https://api.kimi.com/coding/v1`（Kimi Code 订阅控制台可创建，也在 config.json 填 `llm.kimi_api_key`）；传统 Moonshot 平台密钥则把 `llm.kimi_base_url` 改回 `https://api.moonshot.cn/v1`。
   2. **kimi CLI 无头调用**（无需 API key，复用 Kimi Code 订阅，非流式）：检测到本机 `kimi` 命令即启用。
@@ -11,10 +11,22 @@
 ## 快速开始
 
 ```powershell
-cd D:\Code\Projects\caishui-agents
+cd caishui-agents
 .\start.ps1          # 或双击 start.bat，或：python server.py
 # 自动打开 http://127.0.0.1:8642
 ```
+
+### 新环境从零开始（clone 后无缝启动）
+
+1. `git clone` 本仓库，进入目录；
+2. 安装 pass-all-exams 技能（提供 `examctl.py`）：
+   ```powershell
+   git clone https://github.com/jasonisbrave/pass_all_exams.git "$HOME\.opencode\skill\pass-all-exams"
+   ```
+   放其他目录也行，下一步在 config 里指对路径即可；
+3. 复制 `config.example.json` 为 `config.json`（start 脚本会自动做），按需修改三个路径（`~` 会按用户目录展开）；
+4. Kimi 接入二选一：`config.json` 填 `llm.kimi_api_key`，或本机装有 Kimi Code CLI（`kimi`）自动降级；
+5. `.\start.ps1` → 总览/刷题（Anki）/日历即用；没有 pass-all-exams 状态库时相关页为空、对话页照常可用，`examctl init` 建课程后数据自动出现。
 
 > 双击入口推荐 `start.bat`（崩溃时会暂停显示错误）。`start.ps1`/`stop.ps1` 为纯 ASCII 编码，兼容 Windows PowerShell 5.1 与 pwsh 7。
 
@@ -25,8 +37,9 @@ cd D:\Code\Projects\caishui-agents
 | 配置项 | 说明 | 默认 |
 |---|---|---|
 | `port` / `host` | 本地监听 | `8642` / `127.0.0.1`（仅本机） |
-| `pass_all_exams_home` | 学习状态库根目录 | `D:/Code/Learning/Learning/.pass-all-exams` |
-| `skill_dir` | pass-all-exams 技能目录 | `D:/Code/Learning/Learning/.opencode/skill/pass-all-exams` |
+| `pass_all_exams_home` | 学习状态库根目录 | `~/.pass-all-exams` |
+| `skill_dir` | pass-all-exams 技能目录 | `~/.opencode/skill/pass-all-exams` |
+| `learning_agents_md` | 备考约定文档（可选，注入教练系统提示） | 空 = 不注入 |
 | `llm.provider` | `auto` / `moonshot` / `kimi_cli` / `none` | `auto` |
 | `llm.kimi_api_key` | Kimi API 密钥（**gitignored，勿提交**；`sk-kimi-` 前缀） | 空 |
 | `llm.kimi_base_url` | OpenAI 兼容端点 | `https://api.kimi.com/coding/v1` |
@@ -51,7 +64,7 @@ server.py  ── ThreadingHTTPServer，静态托管 + /api 路由
    ├── skill_bridge.py ── 课程发现 / 状态快照 / examctl 子进程（UTF-8 强制）
    └── kimi_client.py  ── moonshot SSE 流 | kimi -p 无头；教练系统提示组装
                             │
-        D:/Code/Learning/Learning/.pass-all-exams（只读）
+        ~/.pass-all-exams（只读）
         Moonshot API（api.moonshot.cn/v1）或本机 kimi CLI
 ```
 
