@@ -2,7 +2,7 @@
 
 日常财税备考（CPA / 中级 / 税务师）专用的本地网页工作台：**不打开 OpenCode / Kimi Code**，让它们回归开发与日常工作。浏览器访问本机端口即可完成备考计划与对话学习。
 
-- 技能：复用 [pass-all-exams](https://github.com/jasonisbrave/pass_all_exams) 技能（`examctl.py` + `SKILL.md`），路径在 `config.json` 指向（支持 `~` 写法，自动展开）。
+- 技能：复用 [pass-all-exams](https://github.com/SolarAscent/pass_all_exams) 技能（`examctl.py` + `SKILL.md`），路径在 `config.json` 指向（支持 `~` 写法，自动展开）。
 - 模型：偏好 Kimi。两种接入方式，自动选择：
   1. **Kimi API**（推荐，流式）：`sk-kimi-` 前缀密钥走 `https://api.kimi.com/coding/v1`（Kimi Code 订阅控制台可创建，也在 config.json 填 `llm.kimi_api_key`）；传统 Moonshot 平台密钥则把 `llm.kimi_base_url` 改回 `https://api.moonshot.cn/v1`。
   2. **kimi CLI 无头调用**（无需 API key，复用 Kimi Code 订阅，非流式）：检测到本机 `kimi` 命令即启用。
@@ -21,7 +21,7 @@ cd caishui-agents
 1. `git clone` 本仓库，进入目录；
 2. 安装 pass-all-exams 技能（提供 `examctl.py`）：
    ```powershell
-   git clone https://github.com/jasonisbrave/pass_all_exams.git "$HOME\.opencode\skill\pass-all-exams"
+   git clone https://github.com/SolarAscent/pass_all_exams.git "$HOME\.opencode\skill\pass-all-exams"
    ```
    放其他目录也行，下一步在 config 里指对路径即可；
 3. 复制 `config.example.json` 为 `config.json`（start 脚本会自动做），按需修改三个路径（`~` 会按用户目录展开）；
@@ -102,4 +102,14 @@ server.py  ── ThreadingHTTPServer，静态托管 + /api 路由
    - `winget install Microsoft.PowerShell` 会因检测到 Store 版已装同版本而拒绝真正安装（报成功但没落盘）；
    - PowerShell 7.7.0 起官方不再发布 MSI，只有 ZIP / MSIX。
    - **最终方案**：官方 ZIP 版解压到 `%LOCALAPPDATA%\Programs\PowerShell\`（校验 hashes.sha256），在 `HKCU\Software\Classes\Applications\pwsh.exe` 注册 `shell\open\command` 并挂入 `.ps1\OpenWithProgids`，右键「打开方式→PowerShell 7→始终」。验证用 `Start-Process xxx.ps1`（等效双击）看 `PSHOME` 是否指向该目录；UserChoice 注册表残留旧 ProgId 不影响实际行为。`UserChoice` 有系统哈希保护，脚本改不动，只能在「打开方式」界面选。
+
+## 致谢
+
+- [pass-all-exams](https://github.com/SolarAscent/pass_all_exams)（by [SolarAscent](https://github.com/SolarAscent)）：本项目的备考技能核心——考点映射、教学闭环、错题修复与间隔复习状态机（`examctl.py` + `SKILL.md`），工作台的进度总览、备考计划与状态回写均建立在其上。
+- [Kimi](https://www.kimi.com/)（Moonshot AI）：教练对话模型与 OpenAI 兼容 API。
+- [Anki](https://apps.ankiweb.net/) 与 [AnkiConnect](https://github.com/FooSoft/anki-connect)：间隔重复刷题与本地接口集成。
+
+## 许可证
+
+[MIT](LICENSE) © 2026 jasonisbrave。依赖的 pass-all-exams 技能同样为 MIT 许可。
 
